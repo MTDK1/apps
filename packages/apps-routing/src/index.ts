@@ -7,6 +7,7 @@ import { Routing, Routes } from './types';
 import appSettings from '@polkadot/ui-settings';
 
 import template from './123code';
+import tcr from './tcr';
 import accounts from './accounts';
 import addressbook from './addressbook';
 import contracts from './contracts';
@@ -39,7 +40,8 @@ const routes: Routes = appSettings.uiMode === 'light'
     // TODO Not sure about the inclusion of treasury & parachains here
     null,
     settings,
-    template
+    template,
+    tcr
   )
   : ([] as Routes).concat(
     dashboard,
@@ -62,7 +64,8 @@ const routes: Routes = appSettings.uiMode === 'light'
     settings,
     toolbox,
     js,
-    template
+    template,
+    tcr
   );
 
 const setup: Routing = {

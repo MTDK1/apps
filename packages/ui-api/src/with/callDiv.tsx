@@ -15,6 +15,7 @@ interface Props<T> extends BaseProps<T> {
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export default function withCallDiv<T> (endpoint: string, options: Options = {}) {
+  console.log("withCallDiv", endpoint, options);
   return (render: (value?: T) => React.ReactNode, defaultProps: DefaultProps = {}): React.ComponentType<any> => {
     class Inner extends React.PureComponent<Props<T>> {
       public render (): React.ReactNode {

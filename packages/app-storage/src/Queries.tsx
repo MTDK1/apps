@@ -22,6 +22,8 @@ export default class Queries extends React.PureComponent<Props> {
       return null;
     }
 
+    console.log("Queries", value);
+
     return (
       <section className='storage--Queries'>
         {value.map((query): React.ReactNode =>

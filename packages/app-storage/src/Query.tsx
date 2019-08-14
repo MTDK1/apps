@@ -42,7 +42,7 @@ class Query extends React.PureComponent<Props, State> {
 
   public static getCachedComponent (query: QueryTypes): CacheInstance {
     const { id, isConst, key, params = [] } = query as StorageModuleQuery;
-
+    console.log("getCachedComponent query = ", JSON.stringify(query, null, 2));
     if (!cache[id]) {
       let renderHelper;
       let type: string;

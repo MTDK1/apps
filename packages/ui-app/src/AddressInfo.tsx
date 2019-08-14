@@ -70,6 +70,8 @@ class AddressInfo extends React.PureComponent<Props> {
   }
 
   private renderBalances (): React.ReactNode {
+    console.log(this.props);
+
     const { balances_all, staking_info, t, withBalance = true } = this.props;
     const balanceDisplay = withBalance === true
       ? { available: true, bonded: true, free: true, redeemable: true, unlocking: true }
