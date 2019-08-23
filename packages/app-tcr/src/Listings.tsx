@@ -31,6 +31,7 @@ class Listings extends React.PureComponent<Props, State> {
 
     const { id, params } = props;
     const key = api.query.tcr.listings;
+    // console.log("api.query.token", api.query.token);
 
     if (!cache[id]) {
       let ps: any[] = params ? params.map((v: any) => v) : [];
@@ -58,7 +59,7 @@ class Listings extends React.PureComponent<Props, State> {
           // console.log("listing item=", value, value ? value.toString(): "no data");
           const itemS = value ? value.toString() : "{}";
           const item: ListingItem = JSON.parse(itemS);
-          console.log("listing item = ", JSON.stringify(item, null, 2));
+          // console.log("listing item = ", JSON.stringify(item, null, 2));
           const { id, data, owner, deposit, application_expiry, whitelisted, challenge_id } = item;
           const date = new Date(application_expiry * 1000);
           const dateS = date.toLocaleString();
@@ -132,7 +133,7 @@ class Listings extends React.PureComponent<Props, State> {
   }
   public static getDerivedStateFromProps({ value }: Props): Pick<State, never> {
 
-    console.log("getDerivedStateFromProps", value);
+    // console.log("getDerivedStateFromProps", value);
     const Component = Listings.getCachedComponent(value).Component;
 
     return {

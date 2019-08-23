@@ -22,6 +22,7 @@ import Owner from './Owner';
 import ListingIndexSelector from './ListingIndexSelector';
 import { TYPES } from './types';
 import ListingHash from './ListingHash';
+import Transfer from './transfer';
 
 // define out internal types
 // type Props = AppProps & I18nProps;
@@ -45,7 +46,7 @@ class App extends React.PureComponent<Props, State> {
 
     // console.log("Tcr.render() porps = ", this.props);
     const { api } = this.props;
-    console.log("Tcr.render() api = ", api);
+    // console.log("Tcr.render() api = ", api);
     if (Component) {
       return (
         // in all apps, the main wrapper is setup to allow the padding
@@ -82,6 +83,8 @@ class App extends React.PureComponent<Props, State> {
             this.setState({listingIdx: idx})
           }} />
           <ListingHash label="Listing Hash" listingIdx={this.state.listingIdx} />
+          <hr />
+          <Transfer />
         </main>
       );
     }
