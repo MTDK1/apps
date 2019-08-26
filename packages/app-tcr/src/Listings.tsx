@@ -63,10 +63,46 @@ class Listings extends React.PureComponent<Props, State> {
           const { id, data, owner, deposit, application_expiry, whitelisted, challenge_id } = item;
           const date = new Date(application_expiry * 1000);
           const dateS = date.toLocaleString();
+
+          var dataString: string | null = null;
+
+          function stringFromUTF8Array(data: number[]) {
+            const extraByteMap = [1, 1, 1, 1, 2, 2, 3, 0];
+            var count = data.length;
+            var str = "";
+
+            for (var index = 0; index < count;) {
+              var ch = data[index++];
+              if (ch & 0x80) {
+                var extra = extraByteMap[(ch >> 3) & 0x07];
+                if (!(ch & 0x40) || !extra || ((index + extra) > count))
+                  return null;
+
+                ch = ch & (0x3F >> extra);
+                for (; extra > 0; extra -= 1) {
+                  var chx = data[index++];
+                  if ((chx & 0xC0) != 0x80)
+                    return null;
+
+                  ch = (ch << 6) | (chx & 0x3F);
+                }
+              }
+
+              str += String.fromCharCode(ch);
+            }
+
+            return str;
+          }
+          try {
+            console.log("Listing",dataString = stringFromUTF8Array(data));
+          } catch {
+            console.log("Listing Error", data);
+          }
+
           return (
             <div>
               <div>ID: {id}</div>
-              <div>Data: {data}</div>
+              <div>Data: {dataString ? dataString : data}</div>
               <div>Owner: {owner}</div>
               <div>Deposit: {deposit}</div>
               <div>Application Expiry: {dateS}</div>

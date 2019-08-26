@@ -23,6 +23,7 @@ import ListingIndexSelector from './ListingIndexSelector';
 import { TYPES } from './types';
 import ListingHash from './ListingHash';
 import Transfer from './transfer';
+import Propose from './propose';
 
 // define out internal types
 // type Props = AppProps & I18nProps;
@@ -84,7 +85,11 @@ class App extends React.PureComponent<Props, State> {
           }} />
           <ListingHash label="Listing Hash" listingIdx={this.state.listingIdx} />
           <hr />
+          <h2>Transfer</h2>
           <Transfer />
+          <hr />
+          <h2>Propose</h2>
+          <Propose />
         </main>
       );
     }

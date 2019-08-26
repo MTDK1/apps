@@ -1,8 +1,4 @@
-// トークン送信
-
-// Copyright 2017-2019 @polkadot/app-extrinsics authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// TCR propse
 
 import BN from 'bn.js';
 import { I18nProps } from '@polkadot/ui-app/types';
@@ -11,13 +7,9 @@ import { ApiProps } from '@polkadot/ui-api/types';
 import { SubmittableExtrinsic } from '@polkadot/api/promise/types';
 
 import React from 'react';
-import { Button, InputAddress, TxButton, TxComponent, InputBalance } from '@polkadot/ui-app';
+import { Button, InputAddress, TxButton, TxComponent, InputBalance, Input } from '@polkadot/ui-app';
 import { withApi, withMulti } from '@polkadot/ui-api';
-// import { Nonce } from '@polkadot/ui-reactive';
 import translate from '../translate';
-// import Balance from '../account-selector/Balance';
-// import TokenBalance from '../account-selector/TokenBalance';
-
 import AccountSelector from '../account-selector';
 
 type Props = ApiProps & I18nProps & {
@@ -31,17 +23,22 @@ interface State {
   accountId?: string;
   transferTo?: string;
   transferValue?: BN;
+  /**
+   * TCR propse data
+   */
+  data: string;
 }
 
-class Selection extends TxComponent<Props, State> {
+class Propose extends TxComponent<Props, State> {
   public state: State = {
     isValid: false,
     // isValidUnsigned: false
+    data: ""
   };
 
   public render(): React.ReactNode {
     const { apiDefaultTxSudo, t } = this.props;
-    const { isValid, accountId } = this.state;
+    const { isValid, accountId, data } = this.state;
     const extrinsic = this.getExtrinsic() || apiDefaultTxSudo;
 
     // console.log("extrinsic", extrinsic);
@@ -52,13 +49,19 @@ class Selection extends TxComponent<Props, State> {
           onChangeAccount={this.onChangeSender}
         />
         <br></br>
-        {/* 送信先 */}
-        <InputAddress
-          label={t('to')}
-          onChange={this.onChangeTransferTo}
-          type='allPlus'
-        />
 
+        <br></br>
+        {/* DATA */}
+        <Input
+          autoFocus
+          className='full'
+          help={t('TCR に登録する文字列')}
+          isError={false}
+          label={t('data')}
+          onChange={this.onChangeData}
+          onEnter={console.log}
+          value={data}
+        />
         {/* 送信額 */}
         <InputBalance
           help={t('送信トークン')}
@@ -94,18 +97,23 @@ class Selection extends TxComponent<Props, State> {
     this.nextState({ transferValue });
   }
 
-
+  private onChangeData = (data: string): void => {
+    this.nextState({ data });
+  }
 
   private nextState(newState: Partial<State>): void {
     this.setState(
       (prevState: State): State => {
-        const { accountNonce = prevState.accountNonce, accountId = prevState.accountId } = newState;
+        const { accountNonce = prevState.accountNonce, 
+          accountId = prevState.accountId ,
+          data = prevState.data
+        } = newState;
         const { transferTo = prevState.transferTo, transferValue = prevState.transferValue } = newState;
         const isValid = !!(
           accountId &&
           accountId.length &&
-          transferTo &&
-          transferTo.length &&
+          data &&
+          data.length &&
           transferValue
         );
 
@@ -114,15 +122,12 @@ class Selection extends TxComponent<Props, State> {
           accountNonce,
           accountId,
           transferTo,
-          transferValue
+          transferValue,
+          data
         };
       }
     );
   }
-
-  // private onChangeNonce = (accountNonce: BN = new BN(0)): void => {
-  //   this.nextState({ accountNonce });
-  // }
 
   private onChangeSender = (accountId: string): void => {
     this.nextState({ accountId, accountNonce: new BN(0) });
@@ -130,19 +135,20 @@ class Selection extends TxComponent<Props, State> {
 
   private getExtrinsic(): SubmittableExtrinsic | null {
     const { api } = this.props;
-    const { transferTo, transferValue } = this.state;
+    const { transferValue, data } = this.state;
 
 
-    if (transferTo && transferTo.length != 0 && transferValue) {
+    if (data && 0 < data.length && transferValue) {
 
-      return api.tx.token.transfer(transferTo, transferValue);
+      const deposit: BN = new BN(transferValue);
+      return api.tx.tcr.propose(data, deposit);
     }
     return null;
   }
 }
 
 export default withMulti(
-  Selection,
+  Propose,
   translate,
   withApi
 );
