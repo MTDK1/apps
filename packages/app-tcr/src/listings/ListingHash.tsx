@@ -1,69 +1,23 @@
-import React from "react";
-import { DefaultProps, ComponentRenderer, RenderFn } from "@polkadot/ui-api/with/types";
-import { Labelled } from "@polkadot/ui-app";
-import { withCallDiv, api } from "@polkadot/ui-api";
-import valueToText from "@polkadot/ui-params/valueToText";
-import styled from "styled-components";
+// Index から Hash を取得し、Listings を表示する
 
-// Index のドロップダウンリストを表示
-// 選択された Index に対する Listings を表示する
-
-interface ListingIndexSelectorProps {
-  // インデックス撰択
-  onSelected?: (index: number) => void;
-  count: number;
-}
-
-interface ListingIndexSelectorState {
-  // nothing
-}
-
-const cache: CacheInstance[] = [];
-
-class ListingIndexSelector extends React.PureComponent<ListingIndexSelectorProps, ListingIndexSelectorState> {
-
-  constructor(props: ListingIndexSelectorProps) {
-    super(props);
-  }
-
-  render() {
-
-    const { count } = this.props;
-
-    var options = [];
-    for (let index = 0; index < count; index++) {
-      options.push(<option value={index}>{index}</option>)
-    }
-    console.log(options);
-    return (
-      <select name=' month' onChange={this.onChange}>
-        <option value={-1}>------</option>
-        {options}
-      </select>
-    )
-  }
-
-  onChange = (e: React.FormEvent<HTMLSelectElement>) => {
-    const { onSelected } = this.props;
-    if (onSelected) {
-      onSelected(Number(e.currentTarget.value));
-    } else {
-      console.log('イベントリスナーが登録されていない(onSeleted)', e.currentTarget.value);
-    }
-  }
-}
+import React from 'react';
+import styled from 'styled-components';
+import { withCallDiv, api } from '@polkadot/ui-api';
+import valueToText from '@polkadot/ui-params/valueToText';
+import { RenderFn, DefaultProps, ComponentRenderer } from '@polkadot/ui-api/with/types';
+import { Labelled } from '@polkadot/ui-app';
+import { u8aToHex } from '@polkadot/util';
 
 interface Props {
-  // インデックス撰択
-  onSelected?: (index: number) => void;
-  // 撰択
-  selected?: number;
   className?: string;
   label?: string;
-  // value: QueryParams;
+  listingIdx?: number;
+  onChange?: (hash: string) => void;
 }
+
 interface State {
   Component?: React.ComponentType<{}>;
+  hash?: string;
 }
 
 interface CacheInstance {
@@ -72,19 +26,24 @@ interface CacheInstance {
   refresh: (swallowErrors: boolean, contentShorten: boolean) => React.ComponentType<any>;
 }
 
-class ListingSelector extends React.PureComponent<Props, State> {
+const cache: CacheInstance[] = [];
 
-  public static getCachedComponent(props: Props): CacheInstance {
+class ListingHash extends React.PureComponent<Props, State> {
+  public state: State = {};
 
-    if (!cache[0]) {
-      const key = api.query.tcr.listingCount;
+  public static getCachedComponent({ listingIdx, onChange }: { listingIdx: number, onChange?: (hash: string) => void }): CacheInstance {
 
-      const renderHelper = withCallDiv('subscribe', {
+    if (!cache[listingIdx]) {
+      const key = api.query.tcr.listingIndexHash;
+      let ps: any[] = [listingIdx];
+      let renderHelper;
+      let type: string;
+      renderHelper = withCallDiv('subscribe', {
         paramName: 'params',
         paramValid: true,
-        params: [key]
+        params: [key, ...ps]
       });
-      const type = key.creator ?
+      type = key.creator ?
         key.creator.meta
           ? key.creator.meta.type.toString()
           : 'Data'
@@ -94,13 +53,21 @@ class ListingSelector extends React.PureComponent<Props, State> {
       const defaultProps = { className: 'ui--output' };
       const Component = renderHelper(
         // By default we render a simple div node component with the query results in it
-        (value: any): React.ReactNode => (<ListingIndexSelector onSelected={props.onSelected} count={Number(value)} />), //valueToText(type, value, true, true),
+        (value: any): React.ReactNode => {
+          if (value) {
+            const hash = u8aToHex(value.toU8a(true), -1);
+            if(onChange) onChange(hash);
+            return hash;
+          } else {
+            return (<div>no data</div>)
+          }
+        },
         defaultProps
       );
 
-      cache[0] = ListingSelector.createComponent(type, Component, defaultProps, renderHelper);
+      cache[listingIdx] = ListingHash.createComponent(type, Component, defaultProps, renderHelper);
     }
-    return cache[0];
+    return cache[listingIdx];
   }
   public static createComponent(
     type: string,
@@ -126,16 +93,6 @@ class ListingSelector extends React.PureComponent<Props, State> {
       }
     };
   }
-  public static getDerivedStateFromProps(props: Props): Pick<State, never> {
-
-    console.log("getDerivedStateFromProps", props);
-    const Component = ListingSelector.getCachedComponent(props).Component;
-
-    return {
-      Component
-    };
-  }
-
   public render(): React.ReactNode {
     const { className, label } = this.props;
     const { Component } = this.state;
@@ -160,9 +117,24 @@ class ListingSelector extends React.PureComponent<Props, State> {
       return null;
     }
   }
+
+  public static getDerivedStateFromProps({ listingIdx, onChange }: Props): Pick<State, never> {
+
+    console.log("listingIdx", listingIdx);
+    const param ={
+      listingIdx: Number(listingIdx),
+      onChange: onChange
+    }
+    const Component = ListingHash.getCachedComponent(param).Component;
+
+    return {
+      Component
+    };
+  }
+
 }
 
-export default styled(ListingSelector as React.ComponentClass<Props>)`
+export default styled(ListingHash as React.ComponentClass<Props>)`
 margin-bottom: 0.25em;
 
 label {

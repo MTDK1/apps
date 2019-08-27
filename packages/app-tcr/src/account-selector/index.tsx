@@ -1,6 +1,6 @@
 import BN from 'bn.js';
 import React from "react";
-import { InputAddress, Labelled} from "@polkadot/ui-app";
+import { InputAddress, Labelled } from "@polkadot/ui-app";
 import TokenBalance from "./TokenBalance";
 import translate from '../translate';
 import { withApi, withMulti } from '@polkadot/ui-api';
@@ -21,7 +21,7 @@ interface State {
   transferValue?: BN;
 }
 
-class AccountSelector extends React.PureComponent<Props, State> {
+class App extends React.PureComponent<Props, State> {
   public state: State = {
     isValid: false,
     // isValidUnsigned: false
@@ -70,13 +70,13 @@ class AccountSelector extends React.PureComponent<Props, State> {
       (prevState: State): State => {
         const { accountNonce = prevState.accountNonce, accountId = prevState.accountId } = newState;
         const { transferTo = prevState.transferTo, transferValue = prevState.transferValue } = newState;
-          const isValid = !!(
-            accountId &&
-            accountId.length &&
-            transferTo &&
-            transferTo.length &&
-            transferValue
-          );
+        const isValid = !!(
+          accountId &&
+          accountId.length &&
+          transferTo &&
+          transferTo.length &&
+          transferValue
+        );
 
         return {
           isValid,
@@ -87,9 +87,14 @@ class AccountSelector extends React.PureComponent<Props, State> {
         };
       }
     );
-    
+
     if (newState.accountId && this.state.accountId != newState.accountId) {
-      this.props.onChangeAccount(newState.accountId);
+      const { onChangeAccount } = this.props;
+      if (onChangeAccount) {
+        onChangeAccount(newState.accountId);
+      } else {
+        console.error("onChangeAccount is not function at AccountSelector");
+      }
     }
   }
 
@@ -103,8 +108,8 @@ class AccountSelector extends React.PureComponent<Props, State> {
 
 }
 
-export default withMulti(
-  AccountSelector,
+export const AccountSelector = withMulti(
+  App,
   translate,
   withApi
 );

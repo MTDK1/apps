@@ -19,11 +19,11 @@ import { ApiProps } from '@polkadot/ui-api/types';
 import { withApi, api } from '@polkadot/ui-api';
 
 import Owner from './Owner';
-import ListingIndexSelector from './ListingIndexSelector';
 import { TYPES } from './types';
-import ListingHash from './ListingHash';
 import Transfer from './transfer';
 import Propose from './propose';
+import { TxComponent } from '@polkadot/ui-app';
+import { Listings } from './listings';
 
 // define out internal types
 // type Props = AppProps & I18nProps;
@@ -35,7 +35,7 @@ interface State {
   hash?: string;
 }
 
-class App extends React.PureComponent<Props, State> {
+class App extends TxComponent<Props, State> {
   public state: State = {};
 
   constructor(props: Props) {
@@ -46,21 +46,12 @@ class App extends React.PureComponent<Props, State> {
     const { Component } = this.state;
 
     // console.log("Tcr.render() porps = ", this.props);
-    const { api } = this.props;
+    const { api} = this.props;
     // console.log("Tcr.render() api = ", api);
     if (Component) {
       return (
-        // in all apps, the main wrapper is setup to allow the padding
-        // and margins inside the application. (Just from a consistent pov)
         <main>
-          {/* <SummaryBar /> */}
           <AccountSelector onChange={this.onAccountChange} />
-          {/* <Transfer accountId={accountId} /> */}
-          {/* <Component /> */}
-          {/* <Owner 
-            className="owner"
-            storageEntryPromise={api.query.tcr.owner} 
-            label="Owner" /> */}
         </main>
       );
     } else {
@@ -76,14 +67,12 @@ class App extends React.PureComponent<Props, State> {
             className="owner"
             value={{ id: index++, key: api.query.tcr.owner }}
             label="Owner" />
-          <Owner
+          {/* <ListingCount
             className="listingCount"
-            value={{ id: index++, key: api.query.tcr.listingCount }}
-            label="Listing Count" />
-          <ListingIndexSelector label="Listing Index" onSelected={(idx: number) => {
-            this.setState({listingIdx: idx})
-          }} />
-          <ListingHash label="Listing Hash" listingIdx={this.state.listingIdx} />
+         /> */}
+         <hr />
+         <h1>Listings</h1>
+         <Listings />
           <hr />
           <h2>Transfer</h2>
           <Transfer />
@@ -99,39 +88,6 @@ class App extends React.PureComponent<Props, State> {
     this.setState({ accountId });
   }
 
-  // React
-  // コンポーネントが読み込まれた時に呼び出される
-  // constructor と render の間に呼び出される
-  // https://ja.reactjs.org/docs/react-component.html#static-getderivedstatefromprops
-  public static getDerivedStateFromProps(): Pick<State, never> {
-
-    // export default translate(withApi(App));
-    // withApi(App) のところで props に api が設定されている
-    // const { api } = props;
-
-    // let defaultValue = api.query.tcr.owner;
-
-    // api.query.tcr.listingCount({}, (value)=>{console.log("hehehe",value.toString())})
-    // .then((value) => console.log(valueToText("U32", value, true, true)));
-
-    // const values: any[] = [defaultValue]; //params.map(({ value }): any => value);
-    // let s = withCallDiv('subscribe', {
-    //   paramName: 'params',
-    //   paramValid: true,
-    //   params: [...values]
-    // });
-    // const defaultProps = { className: 'ui--output' };
-    // const Component = s(
-    //   // By default we render a simple div node component with the query results in it
-    //   (value: any): React.ReactNode => valueToText("owner", value, true, true),
-    //   defaultProps
-    // );
-
-    return {
-      // Component
-    };
-
-  }
 }
 
 export default translate(withApi(App));

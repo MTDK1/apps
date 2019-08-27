@@ -7,10 +7,10 @@ import { ApiProps } from '@polkadot/ui-api/types';
 import { SubmittableExtrinsic } from '@polkadot/api/promise/types';
 
 import React from 'react';
-import { Button, InputAddress, TxButton, TxComponent, InputBalance, Input } from '@polkadot/ui-app';
+import { Button, TxButton, TxComponent, InputBalance, Input } from '@polkadot/ui-app';
 import { withApi, withMulti } from '@polkadot/ui-api';
 import translate from '../translate';
-import AccountSelector from '../account-selector';
+import { AccountSelector } from '../account-selector';
 
 type Props = ApiProps & I18nProps & {
   queueExtrinsic: QueueTxExtrinsicAdd;
@@ -104,8 +104,8 @@ class Propose extends TxComponent<Props, State> {
   private nextState(newState: Partial<State>): void {
     this.setState(
       (prevState: State): State => {
-        const { accountNonce = prevState.accountNonce, 
-          accountId = prevState.accountId ,
+        const { accountNonce = prevState.accountNonce,
+          accountId = prevState.accountId,
           data = prevState.data
         } = newState;
         const { transferTo = prevState.transferTo, transferValue = prevState.transferValue } = newState;

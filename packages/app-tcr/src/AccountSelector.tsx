@@ -26,12 +26,12 @@ class AccountSelector extends React.PureComponent<Props, State> {
     return (
       <section className={`template--AccountSelector ui--row ${className}`}>
         <InputAddress
-          className='medium'
+          className='account'
           label='my default account'
           onChange={this.onChange}
           type='account'
         />
-        <div className='medium'>
+        {/* <div className='medium'>
           <Bubble color='teal' icon='address card' label='index'>
             <AccountIndex params={accountId} />
           </Bubble>
@@ -41,7 +41,7 @@ class AccountSelector extends React.PureComponent<Props, State> {
           <Bubble color='yellow' icon='target' label='transactions'>
             <Nonce params={accountId} />
           </Bubble>
-        </div>
+        </div> */}
       </section>
     );
   }

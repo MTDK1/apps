@@ -18,7 +18,7 @@ import translate from '../translate';
 // import Balance from '../account-selector/Balance';
 // import TokenBalance from '../account-selector/TokenBalance';
 
-import AccountSelector from '../account-selector';
+import { AccountSelector } from '../account-selector';
 
 type Props = ApiProps & I18nProps & {
   queueExtrinsic: QueueTxExtrinsicAdd;
