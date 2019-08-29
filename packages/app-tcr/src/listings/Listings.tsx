@@ -5,12 +5,16 @@ import React from "react";
 import { withCall, api } from "@polkadot/ui-api";
 import { Labelled } from "@polkadot/ui-app";
 
+import Params from '@polkadot/ui-params';
+import { Codec } from "@polkadot/types/types";
+import { TypeDef, getTypeDef } from '@polkadot/types';
 
 interface Props<T> extends BaseProps<T> {
   callResult?: T;
+  onChangeChallengeId?: (challengeId: number) => void;
 }
 
-interface CallResult {
+type CallResult = any & {
   id: number,
   data: any,
   owner: string,
@@ -22,41 +26,6 @@ interface CallResult {
 
 const defaultProps = { className: 'ui--output' };
 
-
-class Inner extends React.PureComponent<Props<CallResult>> {
-
-  public render(): React.ReactNode {
-
-    const { callResult, callUpdated, className = defaultProps.className, label = '', style } = this.props;
-
-    console.log(callResult);
-
-    return (
-      <div
-        {...defaultProps}
-        className={[className, callUpdated ? 'rx--updated' : undefined].join(' ')}
-        style={style}
-      >
-        <Labelled
-          label={
-            <div className='ui--Param-text'>
-              {label}
-            </div>
-          }
-        >
-        </Labelled>
-
-        {item('id', '' + (callResult ? callResult.id : ''))}
-        {item('owner', '' + (callResult ? callResult.owner : ''))}
-        {item('whitelisted', '' + (callResult ? callResult.whitelisted : ''))}
-        {item('application_expiry', '' + (callResult ? callResult.application_expiry : ''))}
-        {item('deposit', '' + (callResult ? callResult.deposit : ''))}
-        {item('challenge_id', '' + (callResult ? callResult.challenge_id : ''))}
-        {item('data', '' + (callResult ? stringFromUTF8Array(callResult.data) : ''))}
-      </div>
-    );
-  }
-}
 
 function item(label: string, value: string) {
   return (
@@ -104,7 +73,54 @@ function stringFromUTF8Array(data: number[]) {
   return str;
 }
 
-function listingItem(hash: string) {
+function listingItem(hash: string, onChallngeIdChanged: (id: number) => void) {
+
+  class Inner extends React.PureComponent<Props<CallResult>> {
+
+    private onChllengeIdChanged: (id: number) => void;
+    constructor(props: any) {
+      super(props);
+      this.onChllengeIdChanged = onChallngeIdChanged;
+    }
+
+    public render(): React.ReactNode {
+
+      const { callResult } = this.props;
+      if (!callResult) return null;
+
+      const types: Record<string, string> = callResult.Type;
+      const params = Object.keys(types).map((name): { name: string; type: TypeDef } => ({
+        name,
+        type: getTypeDef(types[name])
+      }));
+      const values = callResult.toArray().map((value: any, idx: any): { isValid: boolean; value: Codec } => {
+        if (params[idx].name === 'data') {
+          value = stringFromUTF8Array(value);
+        }
+        return ({
+          isValid: true,
+          value
+        })
+      });
+
+      return (
+        <Params
+          isDisabled
+          params={params}
+          values={values}
+        />
+      )
+    }
+
+    componentDidUpdate(_prevProps: Props<CallResult>, _prevState: any) {
+      const { callResult } = this.props
+      const { onChllengeIdChanged } = this;
+      if (onChllengeIdChanged && callResult) {
+        console.log("ChallengeID", Number(callResult.challenge_id))
+        onChllengeIdChanged(Number(callResult.challenge_id));
+      }
+    }
+  }
 
   const key = api.query.tcr.listings;
   const ps = [hash];
@@ -118,10 +134,10 @@ function listingItem(hash: string) {
   return withCall(endpoint, { ...options, propName: 'callResult' })(Inner);
 };
 
-export class ListingItem extends React.PureComponent<{ hash: string }> {
+export class ListingItem extends React.PureComponent<{ hash: string, onChallngeIdChanged: (id: number) => void }> {
 
   render() {
-    const Component = listingItem(this.props.hash)
+    const Component = listingItem(this.props.hash, this.props.onChallngeIdChanged)
     return <Component />
   }
 }

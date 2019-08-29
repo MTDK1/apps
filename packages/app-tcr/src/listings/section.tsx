@@ -23,7 +23,7 @@ import { TxButton, Button, TxComponent } from '@polkadot/ui-app';
 import { SubmittableExtrinsic } from '@polkadot/api/promise/types';
 import { ListingCount, ListingHash, ListingIndexSelector, ListingItem } from '.';
 import { AccountSelector } from '../account-selector';
-
+import Challenge from '../challenges';
 
 // define out internal types
 // type Props = AppProps & I18nProps;
@@ -34,6 +34,7 @@ interface State {
   listingIdx?: number;
   hash?: string;
   count: number;
+  challengeId?: number;
 }
 
 class App extends TxComponent<Props, State> {
@@ -82,7 +83,8 @@ class App extends TxComponent<Props, State> {
             listingIdx={this.state.listingIdx}
             onChange={(hash: string) => this.setState({ hash })}
           />
-          <ListingItem hash={'' + this.state.hash} />
+          <h2>Item</h2>
+          <ListingItem hash={'' + this.state.hash} onChallngeIdChanged={(id: number) => { this.setState({ challengeId: id }) }} />
           <Button.Group>
             <TxButton
               accountId={accountId}
@@ -102,6 +104,9 @@ class App extends TxComponent<Props, State> {
               ref={this.button}
             />
           </Button.Group>
+          <h2>Chllenge</h2>
+          <Challenge challengeId={this.state.challengeId ? this.state.challengeId : 0} />
+          ----
         </section>
       );
     }

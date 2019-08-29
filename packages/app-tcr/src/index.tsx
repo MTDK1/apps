@@ -46,7 +46,7 @@ class App extends TxComponent<Props, State> {
     const { Component } = this.state;
 
     // console.log("Tcr.render() porps = ", this.props);
-    const { api} = this.props;
+    const { api } = this.props;
     // console.log("Tcr.render() api = ", api);
     if (Component) {
       return (
@@ -70,9 +70,9 @@ class App extends TxComponent<Props, State> {
           {/* <ListingCount
             className="listingCount"
          /> */}
-         <hr />
-         <h1>Listings</h1>
-         <Listings />
+          <hr />
+          <h1>Listings</h1>
+          <Listings />
           <hr />
           <h2>Transfer</h2>
           <Transfer />
