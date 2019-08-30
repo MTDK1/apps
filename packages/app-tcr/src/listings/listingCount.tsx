@@ -1,15 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
-import { withCallDiv } from '@polkadot/ui-api';
-import valueToText from '@polkadot/ui-params/valueToText';
-// import { RenderFn, DefaultProps, ComponentRenderer } from '@polkadot/ui-api/with/types';
 import { Labelled } from '@polkadot/ui-app';
 import { api } from '@polkadot/ui-api';
+
+
+const NOOP = () => { };
 
 type Props = {
   className?: string;
   label?: string;
-  // onSelected?: (index: number) => void;
   onChange?: (count: number) => void;
 }
 
@@ -21,49 +20,57 @@ interface State {
 class ListingCount extends React.PureComponent<Props, State> {
 
   public state: State = {
-    count: 0,
+    count: -1,
   };
 
-  public render(): React.ReactNode {
-    const { className, label } = this.props;
-    const key = api.query.tcr.listingCount;
-    const renderHelper = withCallDiv('subscribe', {
-      paramName: 'params',
-      paramValid: true,
-      params: [key]
-    });
-    const type = key.creator ?
-      key.creator.meta
-        ? key.creator.meta.type.toString()
-        : 'Data'
-      : 'Data';
+  constructor(props: Props) {
+    super(props);
 
-    const Component1 = renderHelper(
-      // By default we render a simple div node component with the query results in it
-      (value: any): React.ReactNode => {
-        this.nextState({ count: value });
-        return (
-          <div>
-            {valueToText(type, value, true, true)}
-          </div>
-        )
-      },
-      { className: 'ui--output' }
-    );
+    this.onChangeCount.bind(this);
+  }
+
+  public render(): React.ReactNode {
+
+    const { className, label } = this.props;
+
     return (
       <div className={`tcr--Owner tcr--actionrow ${className}`}>
         <div className='tcr--actionrow-value'>
           <Labelled
             label={
               <div className='ui--Param-text'>
-                {label}              </div>
+                {label}
+              </div>
             }
           >
-            <Component1 />
+            <div className='ui--count'>{this.state.count}</div>
           </Labelled>
         </div>
       </div>
     );
+  }
+
+  componentDidMount() {
+    this.subscribe().then(NOOP).catch(NOOP);
+  }
+  componentWillUnmount() {
+    this.unsubscribe().then(NOOP).catch(NOOP);
+  }
+
+  private async unsubscribe(): Promise<void> {
+    if (this.destroy) {
+      this.destroy();
+      this.destroy = undefined;
+    }
+  }
+
+  private destroy?: () => void;
+  private async subscribe(): Promise<void> {
+    await this.unsubscribe();
+    this.destroy = await api.query.tcr.listingCount((value) => {
+      const count = Number(value.toString());
+      this.nextState({ count });
+    });
   }
   private nextState = (newState: Partial<State>): void => {
     this.setState(
@@ -72,13 +79,13 @@ class ListingCount extends React.PureComponent<Props, State> {
           count = prevState.count
         } = newState;
         if (prevState.count != count) {
-          this.onChangeCount(count);
+          this.onChangeCount(count).then(NOOP).catch(NOOP);
         }
         return { count };
       }
     );
   }
-  private onChangeCount = (count: number) => {
+  private async onChangeCount(count: number): Promise<void> {
     if (this.props.onChange) {
       this.props.onChange(count);
     }
@@ -100,5 +107,20 @@ label {
 .ui--IdentityIcon {
   margin: -10px 0;
   vertical-align: middle;
+}
+.ui--count {
+  padding-left: 1.45rem;
+  padding-top: 2.5rem;
+  padding-bottom: 1rem;
+  padding-right: 1rem;
+  font-size: 30px;
+  background: #fefefe;
+  border-radius: 4px;
+  border: 1px dashed #eee;
+  box-sizing: border-box;
+  line-height: 1rem;
+  margin: .25rem;
+ position: relative;
+  word-wrap: break-word;
 }
 `;
