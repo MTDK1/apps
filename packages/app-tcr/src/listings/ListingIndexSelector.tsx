@@ -22,7 +22,7 @@ class ListingIndexSelector extends React.PureComponent<Props, State> {
     var options = [];
 
     for (let index = 0; index < count; index++) {
-      options.push(<option value={index}>{index}</option>)
+      options.push(<option key={index} value={index}>{index}</option>)
     }
 
     return (

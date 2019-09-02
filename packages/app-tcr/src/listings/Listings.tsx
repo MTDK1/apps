@@ -1,6 +1,6 @@
 // Hash から Listings を表示する
 
-import { BaseProps } from "@polkadot/ui-api/types";
+import { ApiProps } from "@polkadot/ui-api/types";
 import React from "react";
 import { withCall, api } from "@polkadot/ui-api";
 
@@ -8,9 +8,16 @@ import Params from '@polkadot/ui-params';
 import { Codec } from "@polkadot/types/types";
 import { TypeDef, getTypeDef } from '@polkadot/types';
 
-interface Props<T> extends BaseProps<T> {
-  callResult?: T;
+interface Props {
+  id: number;
+  hash?: string;
+  onChallngeIdChanged?: (id: number) => void;
+  callResult?: CallResult;
   onChangeChallengeId?: (challengeId: number) => void;
+}
+
+interface State {
+  Component: React.ComponentType;
 }
 
 type CallResult = any & {
@@ -51,14 +58,19 @@ function stringFromUTF8Array(data: number[]) {
   return str;
 }
 
-function listingItem(hash: string, onChallngeIdChanged: (id: number) => void) {
+function listingItem(props: Props, onChallngeIdChanged: (id: number) => void) {
 
-  class Inner extends React.PureComponent<Props<CallResult>> {
+  const { hash } = props;
+
+  class Inner extends React.PureComponent<Props & ApiProps> {
 
     private onChllengeIdChanged: (id: number) => void;
     constructor(props: any) {
       super(props);
       this.onChllengeIdChanged = onChallngeIdChanged;
+      this.state = {
+        id: -1
+      }
     }
 
     public render(): React.ReactNode {
@@ -74,12 +86,16 @@ function listingItem(hash: string, onChallngeIdChanged: (id: number) => void) {
       const values = callResult.toArray().map((value: any, idx: any): { isValid: boolean; value: Codec } => {
         if (params[idx].name === 'data') {
           value = stringFromUTF8Array(value);
+        } else if (params[idx].name === 'application_expiry') {
+          value = new Date(value.toString()).toLocaleString();
         }
         return ({
           isValid: true,
           value
         })
       });
+
+      this.update().then(() => { }).catch(() => { });
 
       return (
         <Params
@@ -90,12 +106,13 @@ function listingItem(hash: string, onChallngeIdChanged: (id: number) => void) {
       )
     }
 
-    componentDidUpdate(_prevProps: Props<CallResult>, _prevState: any) {
-      const { callResult } = this.props
-      const { onChllengeIdChanged } = this;
-      if (onChllengeIdChanged && callResult) {
-        console.log("ChallengeID", Number(callResult.challenge_id))
-        onChllengeIdChanged(Number(callResult.challenge_id));
+    private async update() {
+      if (this.onChllengeIdChanged && this.props.callResult) {
+        const id = Number(this.props.callResult.challenge_id);
+        if (!isNaN(id) && 0 < id) {
+          console.log("ListingItem challenge_id", id);
+          this.onChllengeIdChanged(id);
+        }
       }
     }
   }
@@ -110,13 +127,53 @@ function listingItem(hash: string, onChallngeIdChanged: (id: number) => void) {
   }
   const endpoint = 'subscribe';
   return withCall(endpoint, { ...options, propName: 'callResult' })(Inner);
+
 };
 
-export class ListingItem extends React.PureComponent<{ hash: string, onChallngeIdChanged: (id: number) => void }> {
+
+
+export class ListingItem extends React.PureComponent<Props, State> {
 
   render() {
-    console.log("ListingItem hash", this.props.hash);
-    const Component = listingItem(this.props.hash, this.props.onChallngeIdChanged)
-    return <Component />
+
+    const { id, hash } = this.props;
+    const { Component } = this.state;
+    if (Component) {
+      return (
+        <div>
+          <Component />
+        </div>
+      );
+    }
+    return (
+      <div>No DATA({id}: {hash})</div>
+    );;
   }
+
+  private static getCachedComponent(props: Props) {
+
+    const { id, hash, onChallngeIdChanged = (id: any) => { } } = props;
+
+    if (!hash || hash === 'undefined') {
+      return null;
+    }
+
+    if (!caches[id]) {
+
+      caches[id] = listingItem(props, onChallngeIdChanged);
+    }
+    return caches[id];
+  }
+
+  public static getDerivedStateFromProps(props: Props): Pick<State, never> {
+
+    const Component = ListingItem.getCachedComponent(props);
+
+    return {
+      Component
+    };
+  }
+
 }
+
+var caches: React.ComponentType[] = [];
