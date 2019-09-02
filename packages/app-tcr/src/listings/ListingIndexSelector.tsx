@@ -32,7 +32,7 @@ class ListingIndexSelector extends React.PureComponent<Props, State> {
             label={<div className='ui--Param-text'>{label}</div>}>
             <div className="ui--output">
               <select name=' idx' onChange={this.onChange}>
-                {/* <option value={-1}>------</option> */}
+                <option value={-1}>------</option>
                 {options}
               </select>
             </div>
@@ -42,6 +42,8 @@ class ListingIndexSelector extends React.PureComponent<Props, State> {
     );
   }
   onChange = (e: React.FormEvent<HTMLSelectElement>) => {
+
+    console.log("SELECT", e.currentTarget.value);
     const { onSelected } = this.props;
     if (onSelected) {
       onSelected(Number(e.currentTarget.value));

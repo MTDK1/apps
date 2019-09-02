@@ -56,7 +56,7 @@ class ListingHash extends React.PureComponent<Props, State> {
         (value: any): React.ReactNode => {
           if (value) {
             const hash = u8aToHex(value.toU8a(true), -1);
-            if(onChange) onChange(hash);
+            if (onChange) onChange(hash);
             return hash;
           } else {
             return (<div>no data</div>)
@@ -120,8 +120,10 @@ class ListingHash extends React.PureComponent<Props, State> {
 
   public static getDerivedStateFromProps({ listingIdx, onChange }: Props): Pick<State, never> {
 
-    console.log("listingIdx", listingIdx);
-    const param ={
+    if (isNaN(Number(listingIdx)) || Number(listingIdx) < 0) {
+      return { Component: undefined };
+    }
+    const param = {
       listingIdx: Number(listingIdx),
       onChange: onChange
     }

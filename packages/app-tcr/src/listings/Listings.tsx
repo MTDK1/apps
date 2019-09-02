@@ -3,7 +3,6 @@
 import { BaseProps } from "@polkadot/ui-api/types";
 import React from "react";
 import { withCall, api } from "@polkadot/ui-api";
-import { Labelled } from "@polkadot/ui-app";
 
 import Params from '@polkadot/ui-params';
 import { Codec } from "@polkadot/types/types";
@@ -22,27 +21,6 @@ type CallResult = any & {
   application_expiry: number,
   whitelisted: boolean,
   challenge_id: string
-}
-
-const defaultProps = { className: 'ui--output' };
-
-
-function item(label: string, value: string) {
-  return (
-    // <div className={`storage--Query storage--actionrow ${defaultProps.className}`}>
-    <div className='storage--actionrow-value'>
-      <Labelled
-        label={
-          <div className='ui--Param-text'>
-            {label}
-          </div>
-        }
-      >
-        <div className='ui--output '>{value}</div>
-      </Labelled>
-    </div>
-    // </div>
-  );
 }
 
 function stringFromUTF8Array(data: number[]) {
@@ -137,6 +115,7 @@ function listingItem(hash: string, onChallngeIdChanged: (id: number) => void) {
 export class ListingItem extends React.PureComponent<{ hash: string, onChallngeIdChanged: (id: number) => void }> {
 
   render() {
+    console.log("ListingItem hash", this.props.hash);
     const Component = listingItem(this.props.hash, this.props.onChallngeIdChanged)
     return <Component />
   }

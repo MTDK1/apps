@@ -33,7 +33,7 @@ interface State {
   Component?: React.ComponentType<{}>;
   listingIdx?: number;
   hash?: string;
-  count: number;
+  count?: number;
   challengeId?: number;
 }
 
@@ -68,23 +68,23 @@ class App extends TxComponent<Props, State> {
           <ListingCount
             className="listingCount"
             label="Listing Count"
-            onChange={(count: number) => { this.setState({ count }) }}
+            onChange={(count: number) => { this.nextState({ count }) }}
           />
           <ListingIndexSelector
             className="listingCount"
             label="Listing Index"
-            count={count}
+            count={Number(count)}
             onSelected={(idx: number) => {
-              this.setState({ listingIdx: idx })
+              this.nextState({ listingIdx: idx })
             }}
           />
           <ListingHash
             label="Listing Hash"
             listingIdx={this.state.listingIdx}
-            onChange={(hash: string) => this.setState({ hash })}
+            onChange={(hash: string) => this.nextState({ hash })}
           />
           <h2>Item</h2>
-          <ListingItem hash={'' + this.state.hash} onChallngeIdChanged={(id: number) => { this.setState({ challengeId: id }) }} />
+          <ListingItem hash={'' + this.state.hash} onChallngeIdChanged={(id: number) => { this.nextState({ challengeId: id }) }} />
           <Button.Group>
             <TxButton
               accountId={accountId}
@@ -110,6 +110,35 @@ class App extends TxComponent<Props, State> {
         </section>
       );
     }
+  }
+
+  private nextState = (newState: State): void => {
+    this.setState((prevState: State) => {
+      const {
+        accountId = prevState.accountId,
+        Component = prevState.Component,
+        listingIdx = prevState.listingIdx,
+        count = prevState.count } = newState;
+      var {
+        hash = prevState.hash,
+        challengeId = prevState.challengeId,
+      } = newState;
+
+      if (isNaN(Number(listingIdx)) || Number(listingIdx) < 0) {
+        hash = undefined;
+        challengeId = undefined;
+      }
+
+      return {
+        accountId,
+        Component,
+        listingIdx,
+        hash,
+        count,
+        challengeId
+      }
+
+    });
   }
 
   private onAccountChange = (accountId?: string): void => {
