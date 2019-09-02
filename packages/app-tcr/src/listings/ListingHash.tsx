@@ -123,10 +123,10 @@ class ListingHash extends React.PureComponent<Props, State> {
     // パラメータチェック
     if (isNaN(Number(listingIdx)) || Number(listingIdx) < 0) {
       // 数字以外、0以下の場合は画面表示しない
-      console.warn("ListingHash Index is", listingIdx);
+      // console.warn("ListingHash Index is", listingIdx);
       return { Component: undefined };
     }
-    console.info("ListingHash Index is", listingIdx);
+    // console.info("ListingHash Index is", listingIdx);
     const param = {
       listingIdx: Number(listingIdx),
       onChange: onChange
