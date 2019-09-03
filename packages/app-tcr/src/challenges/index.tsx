@@ -1,55 +1,101 @@
 import { api } from "@polkadot/ui-api";
 import React from "react";
 
-import translate from '../translate';
-import { I18nProps } from "@polkadot/ui-app/types";
 import Params from '@polkadot/ui-params';
 import { Codec } from "@polkadot/types/types";
 import { TypeDef, getTypeDef } from '@polkadot/types';
+import { Button, TxButton, TxComponent, Input } from "@polkadot/ui-app";
 
 
 // Challenge
 
 type Props = {
+  accountId?: string;
   challengeId: number;
 }
 interface State {
   challenge?: any;
+  voteDeposit: number
 }
 
-class Challenge extends React.PureComponent<Props, State> {
+class Challenge extends TxComponent<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.state = {};
+    this.state = {
+      voteDeposit: 0,
+    };
   }
 
   render() {
     // console.log(`Challenge > ${this.state.challenge}`);
     if (this.state.challenge) {
-      const { challenge } = this.state;
-      // {"listing_hash":"0xe45f8fc9761331ac8b09d28b7dbdb50bc5e272381bfff43ece77656a652d11c3","deposit":10,"owner":"5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY","voting_ends":1566913120,"resolved":false,"reward_pool":0,"total_tokens":0}
-      // const { listing_hash = '', deposit = 0, owner = '', voting_ends = 0, resolved = false, reward_pool = 0, total_tokens = 0 } = challenge;
+      const { challenge, voteDeposit } = this.state;
+      const { accountId, challengeId } = this.props;
 
       const types: Record<string, string> = challenge.Type;
       const params = Object.keys(types).map((name): { name: string; type: TypeDef } => ({
         name,
         type: getTypeDef(types[name])
       }));
-      const values = challenge.toArray().map((value: any): { isValid: boolean; value: Codec } => ({
-        isValid: true,
-        value
-      }));
+      const values = challenge.toArray().map((value: any, idx: number): { isValid: boolean; value: Codec } => {
+        if (params[idx].name === 'voting_ends') {
+          value = new Date(value.toString()).toLocaleString();
+        }
+        return ({
+          isValid: true,
+          value
+        })
+      });
+
+      const yesExtrinsic = api.tx.tcr.vote(challengeId, true, voteDeposit);
+      const noExtrinsic = api.tx.tcr.vote(challengeId, false, voteDeposit);
 
       return (
-        <Params
+        <div>          <Params
           isDisabled
           params={params}
           values={values}
         />
+          <Input
+            className='full'
+            isError={false}
+            label={'Vote deposit'}
+            onChange={this.onDepositChange}
+            onEnter={console.log}
+            value={voteDeposit}
+          />
+          <Button.Group>
+            <TxButton
+              accountId={accountId}
+              isDisabled={false}
+              isPrimary
+              label={'YES'}
+              extrinsic={yesExtrinsic}
+              ref={this.button}
+            />
+            <Button.Or />
+            <TxButton
+              accountId={accountId}
+              isDisabled={false}
+              isPrimary
+              label={'NO'}
+              extrinsic={noExtrinsic}
+              ref={this.button}
+            />
+          </Button.Group>
+        </div>
       )
     }
     return null;
+  }
+
+  private onDepositChange = (value: string) => {
+    const voteDeposit = Math.max(0, Math.min(Number.MAX_SAFE_INTEGER, Number(value)));
+    if (isNaN(voteDeposit)) {
+      return this.setState({ voteDeposit: 0 });
+    }
+    this.setState({ voteDeposit });
   }
 
   componentDidMount() {
@@ -70,14 +116,14 @@ class Dis extends React.PureComponent<Props, MyState> {
 
   constructor(props: Props) {
     super(props);
-    this.state = { challengeId: -1 };
+    this.state = { challengeId: -1, voteDeposit: 0 };
   }
   render() {
-    const { challengeId } = this.props;
+    const { accountId, challengeId } = this.props;
 
     if (challengeId <= 0) return null;
 
-    const component = this.createNode(challengeId);
+    const component = this.createNode(challengeId, accountId);
     return (
       <div>
         {component}
@@ -85,9 +131,9 @@ class Dis extends React.PureComponent<Props, MyState> {
     );
   }
 
-  createNode(id: number) {
+  createNode(id: number, accountId?: string) {
     return (
-      <Challenge challengeId={id} />
+      <Challenge accountId={accountId} challengeId={id} />
 
     );
   }

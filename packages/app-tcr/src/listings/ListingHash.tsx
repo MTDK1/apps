@@ -26,7 +26,7 @@ interface CacheInstance {
   refresh: (swallowErrors: boolean, contentShorten: boolean) => React.ComponentType<any>;
 }
 
-const cache: CacheInstance[] = [];
+var cache: CacheInstance[] = [];
 
 class ListingHash extends React.PureComponent<Props, State> {
   public state: State = {};
@@ -56,7 +56,9 @@ class ListingHash extends React.PureComponent<Props, State> {
         (value: any): React.ReactNode => {
           if (value) {
             const hash = u8aToHex(value.toU8a(true), -1);
-            if (onChange) onChange(hash);
+            if (onChange) {
+              new Promise(() => { onChange(hash) }).then(() => { }).catch(() => { });
+            }
             return hash;
           } else {
             return (<div>no data</div>)
@@ -138,6 +140,9 @@ class ListingHash extends React.PureComponent<Props, State> {
     };
   }
 
+  componentWillUnmount() {
+    cache = [];
+  }
 }
 
 export default styled(ListingHash as React.ComponentClass<Props>)`

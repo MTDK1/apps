@@ -95,7 +95,9 @@ function listingItem(props: Props, onChallngeIdChanged: (id: number) => void) {
         })
       });
 
-      this.update().then(() => { }).catch(() => { });
+      console.log("ST");
+      this.update().then(() => {console.log("NXT-2"); }).catch(() => { console.log("NXT-3");});
+      console.log("NXT-1");
 
       return (
         <Params
@@ -148,6 +150,10 @@ export class ListingItem extends React.PureComponent<Props, State> {
     return (
       <div>No DATA({id}: {hash})</div>
     );;
+  }
+  
+  componentWillUnmount() {
+    caches = [];
   }
 
   private static getCachedComponent(props: Props) {
