@@ -89,9 +89,9 @@ class Propose extends TxComponent<Props, State> {
   /**
    * 送信先アカウント変更イベントリスナー
    */
-  private onChangeTransferTo = (transferTo: string): void => {
-    this.nextState({ transferTo });
-  }
+  // private onChangeTransferTo = (transferTo: string): void => {
+  //   this.nextState({ transferTo });
+  // }
 
   private onChangeTransferValue = (transferValue?: BN): void => {
     this.nextState({ transferValue });
