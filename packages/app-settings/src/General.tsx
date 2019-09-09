@@ -27,6 +27,8 @@ class General extends React.PureComponent<Props, State> {
   public constructor (props: Props) {
     super(props);
 
+    uiSettings.availableNodes.unshift({ text: 'B-DevUx TCR (MTDK1.tokyo)', value: "wss://mtdk1.devux.tokyo:9944" });
+
     const settings = uiSettings.get();
     const isCustomNode = uiSettings.availableNodes.reduce((isCustomNode, { value }): boolean => {
       return isCustomNode && value !== settings.apiUrl;
