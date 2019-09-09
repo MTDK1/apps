@@ -24,11 +24,14 @@ interface State {
 }
 
 class General extends React.PureComponent<Props, State> {
-  public constructor (props: Props) {
+  public constructor(props: Props) {
     super(props);
 
     // 2019/09/09 koichi.matsuda@infobahn.co.jp
-    uiSettings.availableNodes.unshift({ text: 'B-DevUx TCR (MTDK1.tokyo)', value: "wss://mtdk1.devux.tokyo:9944" });
+    const nodes = uiSettings.availableNodes
+    const bdevuxUrl = { text: 'B-DevUx TCR (MTDK1.tokyo)', value: "wss://mtdk1.devux.tokyo:9944" };
+    if (nodes[0].text !== bdevuxUrl.text)
+      uiSettings.availableNodes.unshift(bdevuxUrl);
 
     const settings = uiSettings.get();
     const isCustomNode = uiSettings.availableNodes.reduce((isCustomNode, { value }): boolean => {
@@ -42,7 +45,7 @@ class General extends React.PureComponent<Props, State> {
     };
   }
 
-  public render (): React.ReactNode {
+  public render(): React.ReactNode {
     const { className, t } = this.props;
     const { isUrlValid, settings: { i18nLang, prefix, uiMode, uiTheme } } = this.state;
 
@@ -189,7 +192,7 @@ class General extends React.PureComponent<Props, State> {
     }));
   }
 
-  private isValidUrl (apiUrl: string): boolean {
+  private isValidUrl(apiUrl: string): boolean {
     return (
       // some random length... we probably want to parse via some lib
       (apiUrl.length >= 7) &&
