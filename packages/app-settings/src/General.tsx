@@ -27,6 +27,7 @@ class General extends React.PureComponent<Props, State> {
   public constructor (props: Props) {
     super(props);
 
+    // 2019/09/09 koichi.matsuda@infobahn.co.jp
     uiSettings.availableNodes.unshift({ text: 'B-DevUx TCR (MTDK1.tokyo)', value: "wss://mtdk1.devux.tokyo:9944" });
 
     const settings = uiSettings.get();
