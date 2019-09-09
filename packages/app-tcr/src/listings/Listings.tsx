@@ -17,7 +17,7 @@ interface Props {
 }
 
 interface State {
-  Component: React.ComponentType;
+  Component?: React.ComponentType;
 }
 
 type CallResult = any & {
@@ -136,6 +136,12 @@ function listingItem(props: Props, onChallngeIdChanged: (id: number) => void) {
 
 export class ListingItem extends React.PureComponent<Props, State> {
 
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      Component: undefined,
+    }
+  }
   render() {
 
     const { id, hash } = this.props;

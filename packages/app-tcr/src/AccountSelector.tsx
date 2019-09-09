@@ -4,8 +4,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { Bubble, InputAddress } from '@polkadot/ui-app';
-import { AccountIndex, Balance, Nonce } from '@polkadot/ui-reactive';
+import { InputAddress } from '@polkadot/ui-app';
 
 interface Props {
   className?: string;
@@ -21,7 +20,6 @@ class AccountSelector extends React.PureComponent<Props, State> {
 
   public render (): React.ReactNode {
     const { className } = this.props;
-    const { accountId } = this.state;
 
     return (
       <section className={`template--AccountSelector ui--row ${className}`}>
