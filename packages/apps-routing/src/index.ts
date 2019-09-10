@@ -8,6 +8,7 @@ import appSettings from '@polkadot/ui-settings';
 
 import template from './123code';
 import tcr from './tcr';
+import tcrtoken from './tcrtoken';
 import accounts from './accounts';
 import addressbook from './addressbook';
 // import contracts from './contracts';
@@ -35,6 +36,7 @@ const routes: Routes = appSettings.uiMode === 'light'
     transfer,
     null,
     tcr,
+    tcrtoken,
     // staking,
     // democracy,
     // council,
@@ -51,6 +53,7 @@ const routes: Routes = appSettings.uiMode === 'light'
     transfer,
     null,
     tcr,
+    tcrtoken,
     // staking,
     // democracy,
     // council,

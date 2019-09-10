@@ -55,8 +55,10 @@
       "@polkadot/ui-reactive/*": [ "packages/ui-reactive/src/*" ],
       "@polkadot/ui-signer": [ "packages/ui-signer/src" ],
       "@polkadot/ui-signer/*": [ "packages/ui-signer/src/*" ],
+      "@polkadot/app-tcr": [ "packages/app-tcr/src" ],
       "@polkadot/app-tcr/*": [ "packages/app-tcr/src/*" ],
-      "@polkadot/app-tcr": [ "packages/app-tcr/src" ]
+      "@polkadot/app-tcrtoken": [ "packages/app-tcrtoken/src" ],
+      "@polkadot/app-tcrtoken/*": [ "packages/app-tcrtoken/src/*" ],
     },
     "typeRoots": [
       "./node_modules/@polkadot/ts",

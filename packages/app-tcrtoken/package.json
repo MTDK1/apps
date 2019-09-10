@@ -1,0 +1,16 @@
+{
+  "name": "@polkadot/app-tcrtoken",
+  "version": "0.34.0-beta.86",
+  "description": "TCR-Token",
+  "main": "index.js",
+  "scripts": {},
+  "author": "Koichi Matsuda <koichi.matsuda@infobahn.co.jp>",
+  "maintainers": [
+    "Koichi Matsuda <koichi.matsuda@infobahn.co.jp>"
+  ],
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@babel/runtime": "^7.5.5",
+    "@polkadot/ui-app": "^0.34.0-beta.86"
+  }
+}
