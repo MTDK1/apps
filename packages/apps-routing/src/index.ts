@@ -10,21 +10,21 @@ import template from './123code';
 import tcr from './tcr';
 import accounts from './accounts';
 import addressbook from './addressbook';
-import contracts from './contracts';
-import council from './council';
+// import contracts from './contracts';
+// import council from './council';
 import dashboard from './dashboard';
-import democracy from './democracy';
+// import democracy from './democracy';
 import explorer from './explorer';
 import extrinsics from './extrinsics';
 import js from './js';
-import parachains from './parachains';
+// import parachains from './parachains';
 import settings from './settings';
-import staking from './staking';
+// import staking from './staking';
 import storage from './storage';
 import sudo from './sudo';
 import toolbox from './toolbox';
 import transfer from './transfer';
-import treasury from './treasury';
+// import treasury from './treasury';
 
 const routes: Routes = appSettings.uiMode === 'light'
   ? ([] as Routes).concat(
