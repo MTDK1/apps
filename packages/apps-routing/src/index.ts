@@ -34,14 +34,14 @@ const routes: Routes = appSettings.uiMode === 'light'
     addressbook,
     transfer,
     null,
-    staking,
-    democracy,
-    council,
+    tcr,
+    // staking,
+    // democracy,
+    // council,
     // TODO Not sure about the inclusion of treasury & parachains here
     null,
     settings,
     template,
-    tcr
   )
   : ([] as Routes).concat(
     dashboard,
@@ -50,13 +50,14 @@ const routes: Routes = appSettings.uiMode === 'light'
     addressbook,
     transfer,
     null,
-    staking,
-    democracy,
-    council,
-    treasury,
-    parachains,
+    tcr,
+    // staking,
+    // democracy,
+    // council,
+    // treasury,
+    // parachains,
     null,
-    contracts,
+    // contracts,
     storage,
     extrinsics,
     sudo,
@@ -65,7 +66,6 @@ const routes: Routes = appSettings.uiMode === 'light'
     toolbox,
     js,
     template,
-    tcr
   );
 
 const setup: Routing = {
