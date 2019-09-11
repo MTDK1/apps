@@ -48,10 +48,13 @@ class Selection extends TxComponent<Props, State> {
 
     return (
       <div className='extrinsics--Selection'>
+        <h1>TCR Token 送信</h1>
+        <h2>送信元</h2>
         <AccountSelector
           onChangeAccount={this.onChangeSender}
         />
         <br></br>
+        <h2>送信先</h2>
         {/* 送信先 */}
         <InputAddress
           label={t('to')}

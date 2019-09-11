@@ -6,11 +6,8 @@ import Tabs, { TabItem } from '@polkadot/ui-app/Tabs';
 import translate from './translate';
 
 import { TYPES } from './types';
-import Propose from './propose';
-import { Listings } from './listings';
 import { Switch, Route } from 'react-router';
-import { Settings } from './settings';
-import { Home } from './home';
+import Home from './transfer';
 
 type Props = AppProps & BareProps & I18nProps;
 
@@ -30,21 +27,8 @@ class TcrApp extends React.PureComponent<Props, State> {
         {
           isRoot: true,
           name: 'overview',
-          text: t('Home')
+          text: t('Transfer')
         },
-        {
-          name: 'listings',
-          text: t('Listings')
-        },
-        {
-          name: 'propose',
-          text: t('Propose')
-        },
-        {
-          name: 'settings',
-          text: t('Settings')
-        }
-
       ]
     };
   }
@@ -62,9 +46,6 @@ class TcrApp extends React.PureComponent<Props, State> {
           />
         </header>
         <Switch>
-          <Route path={`${basePath}/listings`} component={Listings} />
-          <Route path={`${basePath}/propose`} component={Propose} />
-          <Route path={`${basePath}/settings`} component={Settings} />
           <Route component={Home} />
         </Switch>
       </main>
